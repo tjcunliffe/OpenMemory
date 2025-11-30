@@ -1,14 +1,138 @@
 services:
+  # PostgreSQL Database with pgvector extension
+  - type: pserv
+    name: openmemory-db
+    runtime: docker
+    plan: standard
+    region: frankfurt
+    ipAllowList: []
+
+  # OpenMemory Backend API
   - type: web
-    name: openmemory
-    env: node
-    rootDir: backend
-    buildCommand: npm install && npm run build
-    startCommand: npm start
-    plan: free
+    name: openmemory-backend
+    runtime: node
+    region: frankfurt
+    plan: starter
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # Core Configuration
+      - key: NODE_ENV
+        value: production
+      - key: OM_PORT
+        value: "8080"
+      - key: OM_MODE
+        value: standard
+      - key: OM_TIER
+        value: hybrid
+      
+      # API Security - IMPORTANT: Set this in Render Dashboard as a secret
+      - key: OM_API_KEY
+        sync: false
+      
+      # Rate Limiting
+      - key: OM_RATE_LIMIT_ENABLED
+        value: "true"
+      - key: OM_RATE_LIMIT_WINDOW_MS
+        value: "60000"
+      - key: OM_RATE_LIMIT_MAX_REQUESTS
+        value: "100"
+      
+      # CORS - Update with your dashboard URL after deployment
+      - key: OM_IDE_ALLOWED_ORIGINS
+        value: https://openmemory-dashboard.onrender.com,http://localhost:3000
+      
+      # Embeddings Configuration
+      - key: OM_EMBEDDINGS
+        value: synthetic
+      - key: OM_EMBED_MODE
+        value: simple
+      - key: OM_VEC_DIM
+        value: "256"
+      
+      # OpenAI Provider (Optional - set in Render dashboard if using)
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OM_OPENAI_BASE_URL
+        value: https://api.openai.com/v1
+      
+      # PostgreSQL Connection (auto-populated by Render)
+      - key: OM_METADATA_BACKEND
+        value: postgres
+      - key: OM_VECTOR_BACKEND
+        value: pgvector
+      - key: OM_PG_HOST
+        fromDatabase:
+          name: openmemory-db
+          property: host
+      - key: OM_PG_PORT
+        fromDatabase:
+          name: openmemory-db
+          property: port
+      - key: OM_PG_DB
+        fromDatabase:
+          name: openmemory-db
+          property: database
+      - key: OM_PG_USER
+        fromDatabase:
+          name: openmemory-db
+          property: user
+      - key: OM_PG_PASSWORD
+        fromDatabase:
+          name: openmemory-db
+          property: password
+      - key: OM_PG_SSL
+        value: require
+      
+      # Memory & Search
+      - key: OM_MIN_SCORE
+        value: "0.3"
+      - key: OM_MAX_PAYLOAD_SIZE
+        value: "1000000"
+      
+      # Decay System
+      - key: OM_DECAY_LAMBDA
+        value: "0.02"
+      - key: OM_DECAY_INTERVAL_MINUTES
+        value: "1440"
+      - key: OM_DECAY_REINFORCE_ON_QUERY
+        value: "true"
+      
+      # Auto Reflection
+      - key: OM_AUTO_REFLECT
+        value: "false"
+      - key: OM_REFLECT_INTERVAL
+        value: "10"
+      
+      # User Summaries
+      - key: OM_USER_SUMMARY_INTERVAL
+        value: "30"
+      - key: OM_USE_SUMMARY_ONLY
+        value: "true"
+
+  # OpenMemory Dashboard (Next.js)
+  - type: web
+    name: openmemory-dashboard
+    runtime: node
+    region: frankfurt
+    plan: starter
+    buildCommand: cd dashboard && npm install && npm run build
+    startCommand: cd dashboard && npm start
+    healthCheckPath: /
     autoDeploy: true
     envVars:
       - key: NODE_ENV
         value: production
-      - key: OM_PORT
-        value: 8080
+      - key: NEXT_PUBLIC_API_URL
+        value: https://openmemory-backend.onrender.com
+      - key: PORT
+        value: "3000"
+
+# Optional: Redis for caching (uncomment if needed)
+# - type: redis
+#   name: openmemory-cache
+#   plan: starter
+#   maxmemoryPolicy: allkeys-lru
+#   ipAllowList: []
