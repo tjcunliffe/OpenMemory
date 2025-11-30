@@ -5,7 +5,6 @@ services:
     runtime: docker
     plan: standard
     region: frankfurt
-    ipAllowList: []
 
   # OpenMemory Backend API
   - type: web
