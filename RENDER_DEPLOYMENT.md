@@ -12,12 +12,12 @@ Complete guide to deploying your OpenMemory fork (with PostgreSQL + pgvector and
 
 | Service | Plan | Cost/Month | Region |
 |---------|------|------------|--------|
-| PostgreSQL (with pgvector) | Starter | $7 | Frankfurt (EU) |
+| PostgreSQL (with pgvector) | basic-1gb | ~$7 | Frankfurt (EU) |
 | Backend API | Starter | $7 | Frankfurt (EU) |
 | Dashboard | Starter | $7 | Frankfurt (EU) |
 | **Total** | | **~$21/month** | |
 
-> **Note**: You can use the free tier for backend/dashboard during testing, but PostgreSQL requires the paid Starter tier ($7/month) for pgvector support. All services are deployed in the **Frankfurt region** for optimal European latency.
+> **Note**: You can use the free tier for backend/dashboard during testing, but PostgreSQL requires a paid instance type (basic-1gb or higher) for pgvector support. All services are deployed in the **Frankfurt region** for optimal European latency.
 
 ---
 
