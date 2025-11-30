@@ -67,11 +67,13 @@ mem = OpenMemory(
 ### Embedding Providers
 
 #### Synthetic (Testing/Development)
+
 ```python
 embeddings={'provider': 'synthetic'}
 ```
 
 #### OpenAI (Recommended for Production)
+
 ```python
 import os
 
@@ -83,6 +85,7 @@ embeddings={
 ```
 
 #### Gemini
+
 ```python
 embeddings={
     'provider': 'gemini',
@@ -91,6 +94,7 @@ embeddings={
 ```
 
 #### Ollama (Fully Local)
+
 ```python
 embeddings={
     'provider': 'ollama',
@@ -102,6 +106,7 @@ embeddings={
 ```
 
 #### AWS Bedrock
+
 ```python
 embeddings={
     'provider': 'aws',
