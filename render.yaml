@@ -1,11 +1,11 @@
-services:
-  # PostgreSQL Database with pgvector extension
-  - type: pserv
-    name: openmemory-db
-    runtime: docker
+databases:
+  - name: openmemory
+    databaseName: openmemory
+    user: openmemory
     plan: standard
     region: frankfurt
 
+services:
   # OpenMemory Backend API
   - type: web
     name: openmemory-backend
@@ -64,23 +64,23 @@ services:
         value: pgvector
       - key: OM_PG_HOST
         fromDatabase:
-          name: openmemory-db
+          name: openmemory
           property: host
       - key: OM_PG_PORT
         fromDatabase:
-          name: openmemory-db
+          name: openmemory
           property: port
       - key: OM_PG_DB
         fromDatabase:
-          name: openmemory-db
+          name: openmemory
           property: database
       - key: OM_PG_USER
         fromDatabase:
-          name: openmemory-db
+          name: openmemory
           property: user
       - key: OM_PG_PASSWORD
         fromDatabase:
-          name: openmemory-db
+          name: openmemory
           property: password
       - key: OM_PG_SSL
         value: require
@@ -134,4 +134,3 @@ services:
 #   name: openmemory-cache
 #   plan: starter
 #   maxmemoryPolicy: allkeys-lru
-#   ipAllowList: []
