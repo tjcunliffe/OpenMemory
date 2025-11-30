@@ -1,12 +1,31 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      - POSTGRES_DB=${OM_PG_DB:-openmemory}
+      - POSTGRES_USER=${OM_PG_USER:-postgres}
+      - POSTGRES_PASSWORD=${OM_PG_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${OM_PG_USER:-postgres} -d ${OM_PG_DB:-openmemory}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   openmemory:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
       - '8080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
       # Core Configuration
       - OM_PORT=${OM_PORT:-8080}
@@ -67,8 +86,8 @@ services:
       - OM_LG_REFLECTIVE=${OM_LG_REFLECTIVE:-true}
 
       # Metadata Backend (SQLite/PostgreSQL)
-      - OM_METADATA_BACKEND=${OM_METADATA_BACKEND:-sqlite}
-      - OM_PG_HOST=${OM_PG_HOST:-}
+      - OM_METADATA_BACKEND=${OM_METADATA_BACKEND:-postgres}
+      - OM_PG_HOST=${OM_PG_HOST:-postgres}
       - OM_PG_PORT=${OM_PG_PORT:-5432}
       - OM_PG_DB=${OM_PG_DB:-}
       - OM_PG_USER=${OM_PG_USER:-}
@@ -77,8 +96,8 @@ services:
       - OM_PG_TABLE=${OM_PG_TABLE:-openmemory_memories}
       - OM_PG_SSL=${OM_PG_SSL:-disable}
 
-      # Vector Backend (SQLite/Weaviate)
-      - OM_VECTOR_BACKEND=${OM_VECTOR_BACKEND:-sqlite}
+      # Vector Backend (SQLite/Weaviate/pgvector)
+      - OM_VECTOR_BACKEND=${OM_VECTOR_BACKEND:-pgvector}
       - OM_VECTOR_TABLE=${OM_VECTOR_TABLE:-openmemory_vectors}
       - OM_WEAVIATE_URL=${OM_WEAVIATE_URL:-}
       - OM_WEAVIATE_API_KEY=${OM_WEAVIATE_API_KEY:-}
@@ -142,6 +161,8 @@ services:
       start_period: 30s
 
 volumes:
+  postgres_data:
+    driver: local
   openmemory_data:
     driver: local
   valkey_data:
