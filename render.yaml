@@ -129,8 +129,38 @@ services:
       - key: PORT
         value: "3000"
       
-      # Dashboard Authentication - IMPORTANT: Set this in Render Dashboard as a secret
+      # Authentication Configuration
+      # Enable/disable authentication methods (true/false)
+      - key: ENABLE_PASSWORD_AUTH
+        sync: false
+      - key: ENABLE_GITHUB_SSO
+        sync: false
+      
+      # Client-side auth flags (must match above for proper UI rendering)
+      - key: NEXT_PUBLIC_ENABLE_PASSWORD_AUTH
+        sync: false
+      - key: NEXT_PUBLIC_ENABLE_GITHUB_SSO
+        sync: false
+      
+      # Password Authentication - IMPORTANT: Set in Render Dashboard as a secret
       - key: DASHBOARD_PASSWORD
+        sync: false
+      
+      # NextAuth Configuration - IMPORTANT: Set in Render Dashboard as a secret
+      - key: NEXTAUTH_SECRET
+        sync: false
+      
+      # NextAuth URL - Update with your actual dashboard URL after deployment
+      - key: NEXTAUTH_URL
+        value: https://openmemory-dashboard.onrender.com
+      
+      # GitHub OAuth (Optional - only needed if ENABLE_GITHUB_SSO=true)
+      # Set these in Render Dashboard as secrets if using GitHub SSO
+      - key: AUTH_GITHUB_ID
+        sync: false
+      - key: AUTH_GITHUB_SECRET
+        sync: false
+      - key: ALLOWED_GITHUB_USERNAME
         sync: false
 
 # Optional: Redis for caching (uncomment if needed)

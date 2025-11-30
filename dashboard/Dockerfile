@@ -16,8 +16,14 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Set environment variable for build
+# Accept build arguments for NEXT_PUBLIC_ environment variables
+ARG NEXT_PUBLIC_ENABLE_PASSWORD_AUTH
+ARG NEXT_PUBLIC_ENABLE_GITHUB_SSO
+
+# Set environment variables for build (NEXT_PUBLIC_ vars must be set at build time)
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_ENABLE_PASSWORD_AUTH=$NEXT_PUBLIC_ENABLE_PASSWORD_AUTH
+ENV NEXT_PUBLIC_ENABLE_GITHUB_SSO=$NEXT_PUBLIC_ENABLE_GITHUB_SSO
 
 # Build the application
 RUN npm run build

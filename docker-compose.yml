@@ -164,6 +164,9 @@ services:
     build:
       context: ./dashboard
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_ENABLE_PASSWORD_AUTH=${ENABLE_PASSWORD_AUTH:-true}
+        - NEXT_PUBLIC_ENABLE_GITHUB_SSO=${ENABLE_GITHUB_SSO:-false}
     ports:
       - '3000:3000'
     depends_on:
@@ -172,7 +175,21 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8080
       - NODE_ENV=production
+      # Authentication Configuration
+      - ENABLE_PASSWORD_AUTH=${ENABLE_PASSWORD_AUTH:-true}
+      - ENABLE_GITHUB_SSO=${ENABLE_GITHUB_SSO:-false}
+      # Client-side feature flags (NEXT_PUBLIC_ prefix makes them available in browser)
+      - NEXT_PUBLIC_ENABLE_PASSWORD_AUTH=${ENABLE_PASSWORD_AUTH:-true}
+      - NEXT_PUBLIC_ENABLE_GITHUB_SSO=${ENABLE_GITHUB_SSO:-false}
+      # Password Auth
       - DASHBOARD_PASSWORD=${DASHBOARD_PASSWORD:-}
+      # GitHub OAuth
+      - AUTH_GITHUB_ID=${AUTH_GITHUB_ID:-}
+      - AUTH_GITHUB_SECRET=${AUTH_GITHUB_SECRET:-}
+      - ALLOWED_GITHUB_USERNAME=${ALLOWED_GITHUB_USERNAME:-}
+      # NextAuth
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
     restart: unless-stopped
     healthcheck:
       test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3000']
