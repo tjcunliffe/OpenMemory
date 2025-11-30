@@ -2,7 +2,7 @@ databases:
   - name: openmemory
     databaseName: openmemory
     user: openmemory
-    plan: standard
+    plan: starter
     region: frankfurt
 
 services:
