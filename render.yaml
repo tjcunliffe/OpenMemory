@@ -132,15 +132,15 @@ services:
       # Authentication Configuration
       # Enable/disable authentication methods (true/false)
       - key: ENABLE_PASSWORD_AUTH
-        value: "false"
+        sync: false
       - key: ENABLE_GITHUB_SSO
-        value: "true"
+        sync: false
       
       # Client-side auth flags (must match above for proper UI rendering)
       - key: NEXT_PUBLIC_ENABLE_PASSWORD_AUTH
-        value: "false"
+        sync: false
       - key: NEXT_PUBLIC_ENABLE_GITHUB_SSO
-        value: "false"
+        sync: false
       
       # Password Authentication - IMPORTANT: Set in Render Dashboard as a secret
       - key: DASHBOARD_PASSWORD
