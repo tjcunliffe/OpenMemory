@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
 
 export default function Navbar() {
     const [backendStatus, setBackendStatus] = useState<'online' | 'offline' | 'checking'>('checking')
+    const router = useRouter()
 
     useEffect(() => {
         checkBackendStatus()
@@ -34,6 +36,18 @@ export default function Navbar() {
         }
     }
 
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+            })
+            router.push('/login')
+            router.refresh()
+        } catch (error) {
+            console.error('Logout failed:', error)
+        }
+    }
+
     return (
         <nav className="fixed top-0 w-full p-2 pl-20 z-40">
             <div className="bg-stone-950 rounded-xl p-2 flex items-center justify-between">
@@ -52,7 +66,6 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-2 mr-3">
-                    {}
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-900/50 border border-stone-800">
                         <div className="relative flex items-center">
                             <div className={`w-2 h-2 rounded-full ${backendStatus === 'online' ? 'bg-green-500 animate-pulse' :
@@ -66,9 +79,15 @@ export default function Navbar() {
                                 backendStatus === 'offline' ? 'Backend Offline' :
                                     'Checking...'}
                         </span>
-                    </div>                    <button className="rounded-xl p-2 flex justify-center hover:bg-stone-900/50 hover:text-stone-300 border border-stone-800">
+                    </div>
+                    
+                    <button 
+                        onClick={handleLogout}
+                        className="rounded-xl p-2 flex justify-center hover:bg-stone-900/50 hover:text-stone-300 border border-stone-800"
+                        title="Logout"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
                         </svg>
                     </button>
                 </div>
