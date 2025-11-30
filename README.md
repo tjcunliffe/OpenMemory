@@ -438,11 +438,44 @@ npm run dev
 * Visualize timelines
 * Chat with memory
 
-```
+## 6.1 Quick Start
+
+```bash
 cd dashboard
 npm install
 npm run dev
 ```
+
+## 6.2 Authentication
+
+The dashboard includes a flexible authentication system with password and GitHub OAuth support.
+
+**Quick Setup:**
+```bash
+# Generate secret
+openssl rand -base64 32
+
+# Update .env
+NEXTAUTH_SECRET=<your-secret>
+NEXTAUTH_URL=http://localhost:3000
+ENABLE_PASSWORD_AUTH=true
+DASHBOARD_PASSWORD=your-password
+
+# Start dashboard
+docker-compose up --build -d dashboard
+```
+
+**Documentation:**
+- 📖 [Full Authentication Guide](./AUTHENTICATION.md) - Complete setup, configuration, and troubleshooting
+- ⚡ [Quick Start Guide](./AUTHENTICATION_QUICKSTART.md) - Fast reference for common tasks
+
+**Features:**
+- Password authentication with configurable credentials
+- GitHub OAuth with username allowlist
+- Independent toggle for each method
+- Session-based authentication (7-day expiration)
+- HTTP-only cookies for security
+- Dark theme login page
 
 ---
 

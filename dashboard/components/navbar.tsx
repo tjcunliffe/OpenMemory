@@ -1,13 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { signOut } from "next-auth/react"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
 
 export default function Navbar() {
     const [backendStatus, setBackendStatus] = useState<'online' | 'offline' | 'checking'>('checking')
-    const router = useRouter()
 
     useEffect(() => {
         checkBackendStatus()
@@ -37,15 +36,7 @@ export default function Navbar() {
     }
 
     const handleLogout = async () => {
-        try {
-            await fetch('/api/auth/logout', {
-                method: 'POST',
-            })
-            router.push('/login')
-            router.refresh()
-        } catch (error) {
-            console.error('Logout failed:', error)
-        }
+        await signOut({ callbackUrl: '/login' })
     }
 
     return (
